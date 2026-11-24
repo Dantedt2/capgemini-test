@@ -2,11 +2,19 @@ package com.capgemini.test.code.user.infrastructure.persistence;
 
 import com.capgemini.test.code.user.application.port.out.UserRepository;
 import com.capgemini.test.code.user.domain.User;
+import com.capgemini.test.code.user.domain.ValidationException;
+import java.util.Map;
 import java.util.Optional;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 @Repository
 class JpaUserRepositoryAdapter implements UserRepository {
+
+  private static final Map<String, String> FIELD_BY_UNIQUE_CONSTRAINT = Map.of(
+      "users_email_key", "email",
+      "users_dni_key", "dni",
+      "users_phone_key", "phone");
 
   private final SpringDataUserRepository jpa;
 
@@ -16,7 +24,17 @@ class JpaUserRepositoryAdapter implements UserRepository {
 
   @Override
   public User save(User user) {
-    return jpa.save(UserEntity.from(user)).toDomain();
+    try {
+      return jpa.saveAndFlush(UserEntity.from(user)).toDomain();
+    } catch (DataIntegrityViolationException e) {
+      String detail = String.valueOf(e.getMostSpecificCause().getMessage());
+      String field = FIELD_BY_UNIQUE_CONSTRAINT.entrySet().stream()
+          .filter(entry -> detail.contains(entry.getKey()))
+          .map(Map.Entry::getValue)
+          .findFirst()
+          .orElseThrow(() -> e);
+      throw new ValidationException(field);
+    }
   }
 
   @Override

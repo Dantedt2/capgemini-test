@@ -173,3 +173,9 @@ La aplicación debe gestionar salas y usuarios bajo las siguientes condiciones:
 
 - Subir el proyecto a un repositorio público personal.
 - Todos los commits deben estar realizados en la rama main.
+
+---
+
+## Notas de implementación
+
+- *Validación de DNI:* el mock-server sólo devuelve 409 para el DNI en minúsculas `99999999w`; `99999999W` responde 200. El DNI se envía tal cual lo recibe la API, sin normalizarlo, por lo que este comportamiento depende del mock.

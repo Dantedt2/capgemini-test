@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   mockserver:
-    image: mockserver/mockserver:latest
+    image: mockserver/mockserver:5.15.0
     container_name: mockserver
     ports:
       - "1080:1080"

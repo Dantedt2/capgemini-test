@@ -6,9 +6,8 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -17,6 +16,11 @@ spring:
     openfeign:
       okhttp:
         enabled: true
+      client:
+        config:
+          default:
+            connect-timeout: 2000
+            read-timeout: 5000
 
 
 external:

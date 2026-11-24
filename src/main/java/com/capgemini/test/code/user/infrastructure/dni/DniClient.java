@@ -1,8 +1,7 @@
-package com.capgemini.test.code.clients;
+package com.capgemini.test.code.user.infrastructure.dni;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import feign.Logger;
 import feign.okhttp.OkHttpClient;
  
-@FeignClient(name = "checkDniClient", url = "${external.service.url}", configuration = com.capgemini.test.code.clients.DniClient.FeignConfig.class)
-public interface DniClient {
-  @Configuration
-  public class FeignConfig {
+@FeignClient(name = "checkDniClient", url = "${external.service.url}", configuration = DniClient.FeignConfig.class)
+interface DniClient {
+  // Not a @Configuration: component scanning would apply these beans to every Feign client.
+  class FeignConfig {
  
     @Bean(name = "customOkHttpClient")
     public OkHttpClient okHttpClient() {
@@ -22,7 +21,7 @@ public interface DniClient {
  
     @Bean(name = "customLogger")
     public Logger.Level feignLoggerLevel() {
-      return Logger.Level.FULL; // Puedes ajustar el nivel de los logs según tu necesidad
+      return Logger.Level.FULL;
     }
   }
  
